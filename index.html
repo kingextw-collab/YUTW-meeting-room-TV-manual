@@ -5,150 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>會議室設備操作指南</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; }
-        .step-content img { width: 100%; border-radius: 0.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .highlight { color: #1d4ed8; font-weight: 700; background-color: #fef08a; padding: 0 4px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
+        .highlight { color: #1d4ed8; font-weight: 700; background-color: #fef08a; padding: 2px 4px; border-radius: 4px; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .content-text img { width: 100%; border-radius: 0.75rem; margin: 1rem 0 1.5rem 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen">
-    <div id="root"></div>
+<body class="min-h-screen p-4 md:p-8">
+    <div id="app" class="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 fade-in">
+        </div>
 
-    <script type="text/babel">
-        const { useState } = React;
-
-        const DecisionTree = () => {
-            const [history, setHistory] = useState(['start']);
-            const currentStep = history[history.length - 1];
-
-            const data = {
-                // 第一層：選擇所在地
-                'start': {
-                    question: "問題 1: 所在地",
-                    options: [
-                        { label: "151(視訊)會議室", next: "1.151" },
-                        { label: "153(大人)會議室", next: "1.153" },
-                        { label: "777(包袋)會議室", next: "1.777" }
-                    ]
-                },
-                // 第二層：是否視訊
-                '1.151': { question: "151會議室：是否要進行視訊會議？", options: [{ label: "是", next: "2.151" }, { label: "否", next: "3.151" }] },
-                '1.153': { question: "153會議室：是否要進行視訊會議？", options: [{ label: "是", next: "2.153" }, { label: "否", next: "3.153" }] },
-                '1.777': { question: "777會議室：是否要進行視訊會議？", options: [{ label: "是", next: "2.777" }, { label: "否", next: "3.777" }] },
-                
-                // 第三層：電腦來源 (視訊模式下)
-                '2.151': { question: "視訊會議主持人是？", options: [{ label: "會議室電腦", next: "2.151.A" }, { label: "自帶電腦(筆電)", next: "2.151.B" }] },
-                '2.153': { question: "視訊會議主持人是？", options: [{ label: "會議室電腦", next: "2.153.A" }, { label: "自帶電腦(筆電)", next: "2.153.B" }] },
-                '2.777': { question: "視訊會議主持人是？", options: [{ label: "會議室電腦", next: "2.777.A" }, { label: "自帶電腦(筆電)", next: "2.777.B" }] },
-                
-                // 第三層：電腦來源 (非視訊模式下)
-                '3.151': { question: "使用哪台電腦？", options: [{ label: "會議室電腦", next: "3.151.A" }, { label: "自帶電腦(筆電)", next: "3.151.B" }] },
-                '3.153': { question: "使用哪台電腦？", options: [{ label: "會議室電腦", next: "3.153.A" }, { label: "自帶電腦(筆電)", next: "3.153.B" }] },
-                '3.777': { question: "使用哪台電腦？", options: [{ label: "會議室電腦", next: "3.777.A" }, { label: "自帶電腦(筆電)", next: "3.777.B" }] },
-
-                // 最終層：詳細操作步驟 (A系列: 會議室電腦)
-                '2.151.A': { isFinal: true, content: renderFinalStep("151", "AOC 70U6195 LED", "HDMI 2", true) },
-                '2.153.A': { isFinal: true, content: renderFinalStep("153", "TCL 85QM88", "HDMI 2", true) },
-                '2.777.A': { isFinal: true, content: renderFinalStep("777", "SAMSUNG UA75BU8000WXZW", "HDMI 2", true) },
-                '3.151.A': { isFinal: true, content: renderFinalStep("151", "AOC 70U6195 LED", "HDMI 2", false) },
-                '3.153.A': { isFinal: true, content: renderFinalStep("153", "TCL 85QM88", "HDMI 2", false) },
-                '3.777.A': { isFinal: true, content: renderFinalStep("777", "SAMSUNG UA75BU8000WXZW", "HDMI 2", false) },
-
-                // 最終層：詳細操作步驟 (B系列: 自帶電腦)
-                '2.151.B': { isFinal: true, content: renderLaptopStep("151", "AOC 70U6195 LED", "HDMI 1") },
-                '2.153.B': { isFinal: true, content: renderLaptopStep("153", "TCL 85QM88", "HDMI 2") },
-                '2.777.B': { isFinal: true, content: renderLaptopStep("777", "SAMSUNG UA75BU8000WXZW", "HDMI 2") },
-                '3.151.B': { isFinal: true, content: renderLaptopStep("151", "AOC 70U6195 LED", "HDMI 1") },
-                '3.153.B': { isFinal: true, content: renderLaptopStep("153", "TCL 85QM88", "HDMI 2") },
-                '3.777.B': { isFinal: true, content: renderLaptopStep("777", "SAMSUNG UA75BU8000WXZW", "HDMI 2") }
-            };
-
-            function renderFinalStep(room, model, hdmi, isPoly) {
-                return `
-                    <div class="step-content">
-                        <h2 class="text-2xl font-bold mb-4 text-blue-800">${room} 會議室操作指引</h2>
-                        <p class="mb-2">電視型號：<span class="font-bold">${model}</span></p>
-                        <img src="${room}_TV.jpg" alt="${room}電視">
-                        <p class="mb-2">1. 拿起貼有 <span class="highlight">${room}會議室</span> 標籤的遙控器。</p>
-                        <img src="${room}_TV_Remotecontrol.jpg" alt="遙控器">
-                        <p class="mb-2">2. 按下 <span class="highlight">開啟電源</span> 並切換訊號源至 <span class="highlight">${hdmi}</span>。</p>
-                        <img src="${room}_TV_${hdmi.replace(' ', '')}.jpg" alt="電視畫面顯示${hdmi}">
-                        <p class="mb-2">3. 使用會議室內的無線鍵盤滑鼠組進行操作。</p>
-                        <img src="${room}_wirelessKM.jpg" alt="無線鍵盤滑鼠">
-                        ${isPoly ? `
-                            <p class="mb-2">4. 將 Poly 麥克風喇叭 <span class="highlight">電源鍵</span> 長壓至 <span class="highlight text-blue-600">亮起白燈</span> 為止。</p>
-                            <img src="${room}_Poly_PowerOn.jpg" alt="Poly電源開啟">
-                        ` : ''}
-                    </div>
-                `;
-            }
-
-            function renderLaptopStep(room, model, hdmi) {
-                return `
-                    <div class="step-content">
-                        <h2 class="text-2xl font-bold mb-4 text-blue-800">${room} 會議室操作指引 (自帶電腦)</h2>
-                        <p class="mb-2">電視型號：<span class="font-bold">${model}</span></p>
-                        <img src="${room}_TV.jpg" alt="${room}電視">
-                        <p class="mb-2">1. 使用遙控器開啟電源，並切換至 <span class="highlight">${hdmi}</span>。</p>
-                        <img src="${room}_TV_Remotecontrol.jpg" alt="遙控器">
-                        <p class="mb-2">2. 將 <span class="highlight">無線 HDMI 傳輸器</span> 接上您的筆電 HDMI 孔。</p>
-                        <img src="${room}_wirelessHDMI.jpg" alt="接上無線HDMI">
-                    </div>
-                `;
-            }
-
-            const handleNext = (next) => setHistory([...history, next]);
-            const handleBack = () => setHistory(history.slice(0, -1));
-            const handleReset = () => setHistory(['start']);
-
-            const currentData = data[currentStep];
-
-            return (
-                <div class="max-w-xl mx-auto my-6 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
-                    <div class="bg-slate-800 p-6 text-white text-center">
-                        <h1 class="text-xl font-bold tracking-wide">YUTW 設備操作指南</h1>
-                    </div>
-                    
-                    <div class="p-8">
-                        {!currentData?.isFinal ? (
-                            <div>
-                                <h3 class="text-xl font-semibold mb-8 text-slate-800 text-center">{currentData?.question}</h3>
-                                <div class="grid gap-4">
-                                    {currentData?.options.map((opt, index) => (
-                                        <button 
-                                            key={index}
-                                            onClick={() => handleNext(opt.next)}
-                                            class="w-full py-5 px-6 bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-slate-700 rounded-2xl transition-all duration-300 font-bold text-lg shadow-sm flex justify-between items-center"
-                                        >
-                                            {opt.label}
-                                            <span class="text-slate-300">→</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <div>
-                                <div dangerouslySetInnerHTML={{ __html: currentData.content }} />
-                            </div>
-                        )}
-
-                        <div class="mt-12 flex gap-4 border-t border-slate-100 pt-8">
-                            {history.length > 1 && (
-                                <button onClick={handleBack} class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold transition-colors">回上一步</button>
-                            )}
-                            <button onClick={handleReset} class="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors shadow-lg shadow-blue-200">回首頁</button>
-                        </div>
-                    </div>
-                </div>
-            );
+    <script>
+        // 完全複製自你的 constants.tsx 邏輯
+        const DECISION_TREE = {
+          "1": {
+            id: "1",
+            title: "所在地確認",
+            question: "請問您目前所在的會議室是？",
+            options: [
+              { label: "151 (視訊) 會議室", nextId: "1.151" },
+              { label: "153 (大人) 會議室", nextId: "1.153" },
+              { label: "777 (包袋) 會議室", nextId: "1.777" }
+            ]
+          },
+          "1.151": { id: "1.151", title: "151 會議室 - 目的確認", question: "是否要進行視訊會議？", options: [{ label: "是", nextId: "2.151" }, { label: "否", nextId: "3.151" }] },
+          "1.153": { id: "1.153", title: "153 會議室 - 目的確認", question: "是否要進行視訊會議？", options: [{ label: "是", nextId: "2.153" }, { label: "否", nextId: "3.153" }] },
+          "1.777": { id: "1.777", title: "777 會議室 - 目的確認", question: "是否要進行視訊會議？", options: [{ label: "是", nextId: "2.777" }, { label: "否", nextId: "3.777" }] },
+          "2.151": { id: "2.151", title: "151 會議室 - 視訊設備設置", question: "視訊會議主持人是？", options: [{ label: "會議室電腦", nextId: "2.151.A" }, { label: "自帶電腦 (筆電)", nextId: "2.151.B" }] },
+          "2.153": { id: "2.153", title: "153 會議室 - 視訊設備設置", question: "視訊會議主持人是？", options: [{ label: "會議室電腦", nextId: "2.153.A" }, { label: "自帶電腦 (筆電)", nextId: "2.153.B" }] },
+          "2.777": { id: "2.777", title: "777 會議室 - 視訊設備設置", question: "視訊會議主持人是？", options: [{ label: "會議室電腦", nextId: "2.777.A" }, { label: "自帶電腦 (筆電)", nextId: "2.777.B" }] },
+          "3.151": { id: "3.151", title: "151 會議室 - 一般投影設置", question: "使用的是？", options: [{ label: "會議室電腦", nextId: "3.151.A" }, { label: "自帶電腦 (筆電)", nextId: "3.151.B" }] },
+          "3.153": { id: "3.153", title: "153 會議室 - 一般投影設置", question: "使用的是？", options: [{ label: "會議室電腦", nextId: "3.153.A" }, { label: "自帶電腦 (筆電)", nextId: "3.153.B" }] },
+          "3.777": { id: "3.777", title: "777 會議室 - 一般投影設置", question: "使用的是？", options: [{ label: "會議室電腦", nextId: "3.777.A" }, { label: "自帶電腦 (筆電)", nextId: "3.777.B" }] },
+          "2.151.A": { id: "2.151.A", title: "151 會議室：視訊會議 (會議室電腦)", isFinal: true, content: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 151_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 151_wirelessKM.jpg)，將無線麥克風喇叭(對應照片 151_Poly.jpg)[電源鍵](對應照片 151_Poly_On.jpg)長壓至「亮起白燈」為止(對應照片 151_Poly_PowerOn.jpg)。" },
+          "2.153.A": { id: "2.153.A", title: "153 會議室：視訊會議 (會議室電腦)", isFinal: true, content: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 153_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 153_wirelessKM.jpg)，將無線麥克風喇叭(對應照片 153_Poly.jpg)[電源鍵](對應照片 153_Poly_On.jpg)長壓至「亮起白燈」為止(對應照片 153_Poly_PowerOn.jpg)。" },
+          "2.777.A": { id: "2.777.A", title: "777 會議室：視訊會議 (會議室電腦)", isFinal: true, content: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 777_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 777_wirelessKM.jpg)，將無線麥克風喇叭(對應照片 777_Poly.jpg)[電源鍵](對應照片 777_Poly_On.jpg)長壓至「亮起白燈」為止(對應照片 777_Poly_PowerOn.jpg)。" },
+          "2.151.B": { id: "2.151.B", title: "151 會議室：視訊會議 (自帶電腦)", isFinal: true, content: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 151_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 151_wirelessHDMI.jpg)。" },
+          "2.153.B": { id: "2.153.B", title: "153 會議室：視訊會議 (自帶電腦)", isFinal: true, content: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 153_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 153_wirelessHDMI.jpg)。" },
+          "2.777.B": { id: "2.777.B", title: "777 會議室：視訊會議 (自帶電腦)", isFinal: true, content: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 777_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 777_wirelessHDMI.jpg)。" },
+          "3.151.A": { id: "3.151.A", title: "151 會議室：一般使用 (會議室電腦)", isFinal: true, content: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 151_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 151_wirelessKM.jpg)。" },
+          "3.153.A": { id: "3.153.A", title: "153 會議室：一般使用 (會議室電腦)", isFinal: true, content: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 153_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 153_wirelessKM.jpg)。" },
+          "3.777.A": { id: "3.777.A", title: "777 會議室：一般使用 (會議室電腦)", isFinal: true, content: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 777_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 777_wirelessKM.jpg)。" },
+          "3.151.B": { id: "3.151.B", title: "151 會議室：一般使用 (自帶電腦)", isFinal: true, content: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 151_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 151_wirelessHDMI.jpg)。" },
+          "3.153.B": { id: "3.153.B", title: "153 會議室：一般使用 (自帶電腦)", isFinal: true, content: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 153_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 153_wirelessHDMI.jpg)。" },
+          "3.777.B": { id: "3.777.B", title: "777 會議室：一般使用 (自帶電腦)", isFinal: true, content: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 777_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 777_wirelessHDMI.jpg)。" }
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<DecisionTree />);
+        const state = { history: ["1"] };
+
+        function formatContent(text) {
+            // 自動將關鍵字變粗體
+            let formatted = text.replace(/\[(.*?)\]/g, '<span class="highlight">$1</span>');
+            // 自動將 (對應照片 XXX.jpg) 轉換為 <img> 標籤
+            formatted = formatted.replace(/\(對應照片 (.*?)\)/g, '<img src="$1" alt="操作說明圖">');
+            return formatted;
+        }
+
+        function render() {
+            const container = document.getElementById('app');
+            const currentId = state.history[state.history.length - 1];
+            const node = DECISION_TREE[currentId];
+
+            let html = `
+                <div class="bg-slate-800 p-6 text-white text-center shadow-inner">
+                    <p class="text-slate-400 text-xs uppercase tracking-widest mb-1">${node.title}</p>
+                    <h1 class="text-xl font-bold italic">YUTW Meeting Room Guide</h1>
+                </div>
+                <div class="p-8">
+            `;
+
+            if (node.isFinal) {
+                html += `
+                    <div class="fade-in content-text">
+                        <div class="text-slate-700 leading-relaxed text-lg">
+                            ${formatContent(node.content)}
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <h3 class="text-xl font-semibold mb-8 text-slate-800 text-center">${node.question}</h3>
+                    <div class="grid gap-4">
+                        ${node.options.map(opt => `
+                            <button onclick="goNext('${opt.nextId}')" 
+                                class="w-full py-5 px-6 bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-slate-700 rounded-2xl transition-all duration-200 font-bold text-lg shadow-sm flex justify-between items-center group">
+                                ${opt.label}
+                                <span class="text-slate-300 group-hover:text-blue-500 transition-colors">→</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Footer
+            html += `
+                <div class="mt-12 flex gap-4 border-t border-slate-100 pt-8">
+                    ${state.history.length > 1 ? `<button onclick="goBack()" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold transition-colors">回上一步</button>` : ''}
+                    <button onclick="goReset()" class="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-200">回首頁</button>
+                </div>
+            </div>`;
+
+            container.innerHTML = html;
+        }
+
+        function goNext(id) { state.history.push(id); render(); window.scrollTo(0,0); }
+        function goBack() { state.history.pop(); render(); window.scrollTo(0,0); }
+        function goReset() { state.history = ["1"]; render(); window.scrollTo(0,0); }
+
+        window.onload = render;
     </script>
 </body>
 </html>
