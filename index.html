@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -6,24 +5,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>會議室設備操作指南</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .step-content img { width: 100%; border-radius: 0.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .highlight { color: #1d4ed8; font-weight: 700; background-color: #fef08a; padding: 0 4px; }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
-  }
-}
-</script>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-100 min-h-screen">
     <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const DecisionTree = () => {
+            const [history, setHistory] = useState(['start']);
+            const currentStep = history[history.length - 1];
+
+            const data = {
+                // 第一層：選擇所在地
+                'start': {
+                    question: "問題 1: 所在地",
+                    options: [
+                        { label: "151(視訊)會議室", next: "1.151" },
+                        { label: "153(大人)會議室", next: "1.153" },
+                        { label: "777(包袋)會議室", next: "1.777" }
+                    ]
+                },
+                // 第二層：是否視訊
+                '1.151': { question: "151會議室：是否要進行視訊會議？", options: [{ label: "是", next: "2.151" }, { label: "否", next: "3.151" }] },
+                '1.153': { question: "153會議室：是否要進行視訊會議？", options: [{ label: "是", next: "2.153" }, { label: "否", next: "3.153" }] },
+                '1.777': { question: "777會議室：是否要進行視訊會議？", options: [{ label: "是", next: "2.777" }, { label: "否", next: "3.777" }] },
+                
+                // 第三層：電腦來源 (視訊模式下)
+                '2.151': { question: "視訊會議主持人是？", options: [{ label: "會議室電腦", next: "2.151.A" }, { label: "自帶電腦(筆電)", next: "2.151.B" }] },
+                '2.153': { question: "視訊會議主持人是？", options: [{ label: "會議室電腦", next: "2.153.A" }, { label: "自帶電腦(筆電)", next: "2.153.B" }] },
+                '2.777': { question: "視訊會議主持人是？", options: [{ label: "會議室電腦", next: "2.777.A" }, { label: "自帶電腦(筆電)", next: "2.777.B" }] },
+                
+                // 第三層：電腦來源 (非視訊模式下)
+                '3.151': { question: "使用哪台電腦？", options: [{ label: "會議室電腦", next: "3.151.A" }, { label: "自帶電腦(筆電)", next: "3.151.B" }] },
+                '3.153': { question: "使用哪台電腦？", options: [{ label: "會議室電腦", next: "3.153.A" }, { label: "自帶電腦(筆電)", next: "3.153.B" }] },
+                '3.777': { question: "使用哪台電腦？", options: [{ label: "會議室電腦", next: "3.777.A" }, { label: "自帶電腦(筆電)", next: "3.777.B" }] },
+
+                // 最終層：詳細操作步驟 (A系列: 會議室電腦)
+                '2.151.A': { isFinal: true, content: renderFinalStep("151", "AOC 70U6195 LED", "HDMI 2", true) },
+                '2.153.A': { isFinal: true, content: renderFinalStep("153", "TCL 85QM88", "HDMI 2", true) },
+                '2.777.A': { isFinal: true, content: renderFinalStep("777", "SAMSUNG UA75BU8000WXZW", "HDMI 2", true) },
+                '3.151.A': { isFinal: true, content: renderFinalStep("151", "AOC 70U6195 LED", "HDMI 2", false) },
+                '3.153.A': { isFinal: true, content: renderFinalStep("153", "TCL 85QM88", "HDMI 2", false) },
+                '3.777.A': { isFinal: true, content: renderFinalStep("777", "SAMSUNG UA75BU8000WXZW", "HDMI 2", false) },
+
+                // 最終層：詳細操作步驟 (B系列: 自帶電腦)
+                '2.151.B': { isFinal: true, content: renderLaptopStep("151", "AOC 70U6195 LED", "HDMI 1") },
+                '2.153.B': { isFinal: true, content: renderLaptopStep("153", "TCL 85QM88", "HDMI 2") },
+                '2.777.B': { isFinal: true, content: renderLaptopStep("777", "SAMSUNG UA75BU8000WXZW", "HDMI 2") },
+                '3.151.B': { isFinal: true, content: renderLaptopStep("151", "AOC 70U6195 LED", "HDMI 1") },
+                '3.153.B': { isFinal: true, content: renderLaptopStep("153", "TCL 85QM88", "HDMI 2") },
+                '3.777.B': { isFinal: true, content: renderLaptopStep("777", "SAMSUNG UA75BU8000WXZW", "HDMI 2") }
+            };
+
+            function renderFinalStep(room, model, hdmi, isPoly) {
+                return `
+                    <div class="step-content">
+                        <h2 class="text-2xl font-bold mb-4 text-blue-800">${room} 會議室操作指引</h2>
+                        <p class="mb-2">電視型號：<span class="font-bold">${model}</span></p>
+                        <img src="${room}_TV.jpg" alt="${room}電視">
+                        <p class="mb-2">1. 拿起貼有 <span class="highlight">${room}會議室</span> 標籤的遙控器。</p>
+                        <img src="${room}_TV_Remotecontrol.jpg" alt="遙控器">
+                        <p class="mb-2">2. 按下 <span class="highlight">開啟電源</span> 並切換訊號源至 <span class="highlight">${hdmi}</span>。</p>
+                        <img src="${room}_TV_${hdmi.replace(' ', '')}.jpg" alt="電視畫面顯示${hdmi}">
+                        <p class="mb-2">3. 使用會議室內的無線鍵盤滑鼠組進行操作。</p>
+                        <img src="${room}_wirelessKM.jpg" alt="無線鍵盤滑鼠">
+                        ${isPoly ? `
+                            <p class="mb-2">4. 將 Poly 麥克風喇叭 <span class="highlight">電源鍵</span> 長壓至 <span class="highlight text-blue-600">亮起白燈</span> 為止。</p>
+                            <img src="${room}_Poly_PowerOn.jpg" alt="Poly電源開啟">
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            function renderLaptopStep(room, model, hdmi) {
+                return `
+                    <div class="step-content">
+                        <h2 class="text-2xl font-bold mb-4 text-blue-800">${room} 會議室操作指引 (自帶電腦)</h2>
+                        <p class="mb-2">電視型號：<span class="font-bold">${model}</span></p>
+                        <img src="${room}_TV.jpg" alt="${room}電視">
+                        <p class="mb-2">1. 使用遙控器開啟電源，並切換至 <span class="highlight">${hdmi}</span>。</p>
+                        <img src="${room}_TV_Remotecontrol.jpg" alt="遙控器">
+                        <p class="mb-2">2. 將 <span class="highlight">無線 HDMI 傳輸器</span> 接上您的筆電 HDMI 孔。</p>
+                        <img src="${room}_wirelessHDMI.jpg" alt="接上無線HDMI">
+                    </div>
+                `;
+            }
+
+            const handleNext = (next) => setHistory([...history, next]);
+            const handleBack = () => setHistory(history.slice(0, -1));
+            const handleReset = () => setHistory(['start']);
+
+            const currentData = data[currentStep];
+
+            return (
+                <div class="max-w-xl mx-auto my-6 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
+                    <div class="bg-slate-800 p-6 text-white text-center">
+                        <h1 class="text-xl font-bold tracking-wide">YUTW 設備操作指南</h1>
+                    </div>
+                    
+                    <div class="p-8">
+                        {!currentData?.isFinal ? (
+                            <div>
+                                <h3 class="text-xl font-semibold mb-8 text-slate-800 text-center">{currentData?.question}</h3>
+                                <div class="grid gap-4">
+                                    {currentData?.options.map((opt, index) => (
+                                        <button 
+                                            key={index}
+                                            onClick={() => handleNext(opt.next)}
+                                            class="w-full py-5 px-6 bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-slate-700 rounded-2xl transition-all duration-300 font-bold text-lg shadow-sm flex justify-between items-center"
+                                        >
+                                            {opt.label}
+                                            <span class="text-slate-300">→</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <div>
+                                <div dangerouslySetInnerHTML={{ __html: currentData.content }} />
+                            </div>
+                        )}
+
+                        <div class="mt-12 flex gap-4 border-t border-slate-100 pt-8">
+                            {history.length > 1 && (
+                                <button onClick={handleBack} class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold transition-colors">回上一步</button>
+                            )}
+                            <button onClick={handleReset} class="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors shadow-lg shadow-blue-200">回首頁</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<DecisionTree />);
+    </script>
 </body>
 </html>
