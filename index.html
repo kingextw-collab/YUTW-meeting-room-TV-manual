@@ -163,8 +163,16 @@
 
             let html = `
                 <div class="bg-slate-800 p-5 text-white shadow-lg relative">
-                    <button onclick="toggleLang()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-slate-700 hover:bg-slate-600 px-4 py-1.5 rounded-full text-xs font-bold transition-all border border-slate-500 shadow-sm active:scale-95">
-                        ${state.lang === 'zh' ? 'English' : '中文'}
+                    <button onclick="toggleLang()" 
+                    class="absolute right-4 top-1/2 -translate-y-1/2 
+                           bg-yellow-400 hover:bg-yellow-300 active:scale-95
+                           text-slate-900 px-4 py-2 rounded-full text-xs font-black 
+                           transition-all duration-300 shadow-[0_0_15px_rgba(250,204,21,0.4)]
+                           border-2 border-white flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5c1.383 2.607 3.377 4.929 6.003 6.477" />
+                    </svg>
+                    ${state.lang === 'zh' ? 'EN / 中文' : '中文 / EN'}
                     </button>
                     <p class="text-slate-400 text-[10px] uppercase tracking-[0.2em] mb-1">${node.title[state.lang]}</p>
                     <h1 class="text-lg font-bold">${UI_TEXT.guide_title[state.lang]}</h1>
