@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>會議室設備操作指南</title>
+    <title>設備指南 | Equipment Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
@@ -11,60 +11,144 @@
         .highlight { color: #1e40af; font-weight: 700; background-color: #fef08a; padding: 2px 4px; border-radius: 4px; }
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* 針對手機優化的圖片樣式 */
         .content-text img { 
-            width: 100%; 
-            max-height: 40vh; /* 圖片最高只佔螢幕高度的 40% */
-            object-fit: contain; /* 確保圖片內容完整顯示 */
-            background-color: #f8fafc;
-            border-radius: 0.75rem; 
-            margin: 0.75rem 0 1.25rem 0; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
-            border: 1px solid #e2e8f0; 
+            width: 100%; max-height: 40vh; object-fit: contain; 
+            background-color: #f8fafc; border-radius: 0.75rem; 
+            margin: 0.75rem 0 1.25rem 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; 
         }
     </style>
 </head>
 <body class="min-h-screen p-3 md:p-8">
-    <div id="app" class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 fade-in">
-        </div>
+    <div id="app" class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 fade-in"></div>
 
     <script>
         const DECISION_TREE = {
-          "1": {
-            id: "1",
-            title: "所在地確認",
-            question: "請問您目前所在的會議室是？",
-            options: [
-              { label: "151 (視訊) 會議室", nextId: "1.151" },
-              { label: "153 (大人) 會議室", nextId: "1.153" },
-              { label: "777 (包袋) 會議室", nextId: "1.777" }
-            ]
-          },
-          "1.151": { id: "1.151", title: "151 會議室 - 目的確認", question: "是否要進行視訊會議？", options: [{ label: "是", nextId: "2.151" }, { label: "否", nextId: "3.151" }] },
-          "1.153": { id: "1.153", title: "153 會議室 - 目的確認", question: "是否要進行視訊會議？", options: [{ label: "是", nextId: "2.153" }, { label: "否", nextId: "3.153" }] },
-          "1.777": { id: "1.777", title: "777 會議室 - 目的確認", question: "是否要進行視訊會議？", options: [{ label: "是", nextId: "2.777" }, { label: "否", nextId: "3.777" }] },
-          "2.151": { id: "2.151", title: "151 會議室 - 視訊設備設置", question: "視訊會議主持人是？", options: [{ label: "會議室電腦", nextId: "2.151.A" }, { label: "自帶電腦 (筆電)", nextId: "2.151.B" }] },
-          "2.153": { id: "2.153", title: "153 會議室 - 視訊設備設置", question: "視訊會議主持人是？", options: [{ label: "會議室電腦", nextId: "2.153.A" }, { label: "自帶電腦 (筆電)", nextId: "2.153.B" }] },
-          "2.777": { id: "2.777", title: "777 會議室 - 視訊設備設置", question: "視訊會議主持人是？", options: [{ label: "會議室電腦", nextId: "2.777.A" }, { label: "自帶電腦 (筆電)", nextId: "2.777.B" }] },
-          "3.151": { id: "3.151", title: "151 會議室 - 一般投影設置", question: "使用的是？", options: [{ label: "會議室電腦", nextId: "3.151.A" }, { label: "自帶電腦 (筆電)", nextId: "3.151.B" }] },
-          "3.153": { id: "3.153", title: "153 會議室 - 一般投影設置", question: "使用的是？", options: [{ label: "會議室電腦", nextId: "3.153.A" }, { label: "自帶電腦 (筆電)", nextId: "3.153.B" }] },
-          "3.777": { id: "3.777", title: "777 會議室 - 一般投影設置", question: "使用的是？", options: [{ label: "會議室電腦", nextId: "3.777.A" }, { label: "自帶電腦 (筆電)", nextId: "3.777.B" }] },
-          "2.151.A": { id: "2.151.A", title: "151 會議室 (電腦)", isFinal: true, content: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 151_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 151_wirelessKM.jpg)，將無線麥克風喇叭(對應照片 151_Poly.jpg)[電源鍵](對應照片 151_Poly_On.jpg)長壓至「亮起白燈」為止(對應照片 151_Poly_PowerOn.jpg)。" },
-          "2.153.A": { id: "2.153.A", title: "153 會議室 (電腦)", isFinal: true, content: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 153_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 153_wirelessKM.jpg)，將無線麥克風喇叭(對應照片 153_Poly.jpg)[電源鍵](對應照片 153_Poly_On.jpg)長壓至「亮起白燈」為止(對應照片 153_Poly_PowerOn.jpg)。" },
-          "2.777.A": { id: "2.777.A", title: "777 會議室 (電腦)", isFinal: true, content: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 777_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 777_wirelessKM.jpg)，將無線麥克風喇叭(對應照片 777_Poly.jpg)[電源鍵](對應照片 777_Poly_On.jpg)長壓至「亮起白燈」為止(對應照片 777_Poly_PowerOn.jpg)。" },
-          "2.151.B": { id: "2.151.B", title: "151 會議室 (自帶電腦)", isFinal: true, content: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 151_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 151_wirelessHDMI.jpg)。" },
-          "2.153.B": { id: "2.153.B", title: "153 會議室 (自帶電腦)", isFinal: true, content: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 153_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 153_wirelessHDMI.jpg)。" },
-          "2.777.B": { id: "2.777.B", title: "777 會議室 (自帶電腦)", isFinal: true, content: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 777_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 777_wirelessHDMI.jpg)。" },
-          "3.151.A": { id: "3.151.A", title: "151 會議室 (電腦)", isFinal: true, content: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 151_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 151_wirelessKM.jpg)。" },
-          "3.153.A": { id: "3.153.A", title: "153 會議室 (電腦)", isFinal: true, content: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 153_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 153_wirelessKM.jpg)。" },
-          "3.777.A": { id: "3.777.A", title: "777 會議室 (電腦)", isFinal: true, content: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 777_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 777_wirelessKM.jpg)。" },
-          "3.151.B": { id: "3.151.B", title: "151 會議室 (自帶電腦)", isFinal: true, content: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 151_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 151_wirelessHDMI.jpg)。" },
-          "3.153.B": { id: "3.153.B", title: "153 會議室 (自帶電腦)", isFinal: true, content: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 153_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 153_wirelessHDMI.jpg)。" },
-          "3.777.B": { id: "3.777.B", title: "777 會議室 (自帶電腦)", isFinal: true, content: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 777_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 777_wirelessHDMI.jpg)。" }
+            "1": {
+                id: "1",
+                title: { zh: "所在地確認", en: "Location" },
+                question: { zh: "請問您目前所在的會議室是？", en: "Which meeting room are you in?" },
+                options: [
+                    { label: { zh: "151 (視訊) 會議室", en: "151 (Video) Room" }, nextId: "1.151" },
+                    { label: { zh: "153 (大人) 會議室", en: "153 (VIP) Room" }, nextId: "1.153" },
+                    { label: { zh: "777 (包袋) 會議室", en: "777 (Bag) Room" }, nextId: "1.777" }
+                ]
+            },
+            // --- 151 ---
+            "1.151": { title: { zh: "151 目的確認", en: "151 Purpose" }, question: { zh: "是否要進行視訊會議？", en: "Is this a Video Conference?" }, options: [{ label: { zh: "是 (Yes)", en: "Yes" }, nextId: "2.151" }, { label: { zh: "否 (No)", en: "No" }, nextId: "3.151" }] },
+            "2.151": { title: { zh: "151 視訊設置", en: "151 Video Setup" }, question: { zh: "視訊會議主持人是？", en: "Who is the meeting host?" }, options: [{ label: { zh: "會議室電腦", en: "Room Computer" }, nextId: "2.151.A" }, { label: { zh: "自帶電腦 (筆電)", en: "Own Laptop" }, nextId: "2.151.B" }] },
+            "3.151": { title: { zh: "151 投影設置", en: "151 Display Setup" }, question: { zh: "使用的是？", en: "Which device are you using?" }, options: [{ label: { zh: "會議室電腦", en: "Room Computer" }, nextId: "3.151.A" }, { label: { zh: "自帶電腦 (筆電)", en: "Own Laptop" }, nextId: "3.151.B" }] },
+            
+            // --- 153 ---
+            "1.153": { title: { zh: "153 目的確認", en: "153 Purpose" }, question: { zh: "是否要進行視訊會議？", en: "Is this a Video Conference?" }, options: [{ label: { zh: "是 (Yes)", en: "Yes" }, nextId: "2.153" }, { label: { zh: "否 (No)", en: "No" }, nextId: "3.153" }] },
+            "2.153": { title: { zh: "153 視訊設置", en: "153 Video Setup" }, question: { zh: "視訊會議主持人是？", en: "Who is the meeting host?" }, options: [{ label: { zh: "會議室電腦", en: "Room Computer" }, nextId: "2.153.A" }, { label: { zh: "自帶電腦 (筆電)", en: "Own Laptop" }, nextId: "2.153.B" }] },
+            "3.153": { title: { zh: "153 投影設置", en: "153 Display Setup" }, question: { zh: "使用的是？", en: "Which device are you using?" }, options: [{ label: { zh: "會議室電腦", en: "Room Computer" }, nextId: "3.153.A" }, { label: { zh: "自帶電腦 (筆電)", en: "Own Laptop" }, nextId: "3.153.B" }] },
+
+            // --- 777 ---
+            "1.777": { title: { zh: "777 目的確認", en: "777 Purpose" }, question: { zh: "是否要進行視訊會議？", en: "Is this a Video Conference?" }, options: [{ label: { zh: "是 (Yes)", en: "Yes" }, nextId: "2.777" }, { label: { zh: "否 (No)", en: "No" }, nextId: "3.777" }] },
+            "2.777": { title: { zh: "777 視訊設置", en: "777 Video Setup" }, question: { zh: "視訊會議主持人是？", en: "Who is the meeting host?" }, options: [{ label: { zh: "會議室電腦", en: "Room Computer" }, nextId: "2.777.A" }, { label: { zh: "自帶電腦 (筆電)", en: "Own Laptop" }, nextId: "2.777.B" }] },
+            "3.777": { title: { zh: "777 投影設置", en: "777 Display Setup" }, question: { zh: "使用的是？", en: "Which device are you using?" }, options: [{ label: { zh: "會議室電腦", en: "Room Computer" }, nextId: "3.777.A" }, { label: { zh: "自帶電腦 (筆電)", en: "Own Laptop" }, nextId: "3.777.B" }] },
+
+            // --- 最終結果內容 (A = 會議室電腦, B = 自帶電腦) ---
+            "2.151.A": { 
+                isFinal: true, title: { zh: "151 視訊 (電腦)", en: "151 Video (Room PC)" }, 
+                content: {
+                    zh: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 151_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 151_wirelessKM.jpg)，將無線麥克風喇叭(對應照片 151_Poly.jpg)[電源鍵](對應照片 151_Poly_On.jpg)長壓至「亮起白燈」為止(對應照片 151_Poly_PowerOn.jpg)。",
+                    en: "The TV is [AOC 70U6195 LED](對應照片 151_TV.jpg). Use remote [Room 151](對應照片 151_TV_Remotecontrol.jpg). 1. [Power On](對應照片 151_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 151_TV_Remotecontrol_Source.jpg) and select [HDMI 2](對應照片 151_TV_HDMI2.jpg). Then use the [Wireless Keyboard/Mouse](對應照片 151_wirelessKM.jpg). Long-press the [Power Button](對應照片 151_Poly_On.jpg) of the Poly speaker until the [White Light](對應照片 151_Poly_PowerOn.jpg) stays on."
+                }
+            },
+            "2.153.A": { 
+                isFinal: true, title: { zh: "153 視訊 (電腦)", en: "153 Video (Room PC)" }, 
+                content: {
+                    zh: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 153_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 153_wirelessKM.jpg)，將無線麥克風喇叭(對應照片 153_Poly.jpg)[電源鍵](對應照片 153_Poly_On.jpg)長壓至「亮起白燈」為止(對應照片 153_Poly_PowerOn.jpg)。",
+                    en: "The TV is [TCL 85QM88](對應照片 153_TV.jpg). Use remote [Room 153](對應照片 153_TV_Remotecontrol.jpg). 1. [Power On](對應照片 153_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 153_TV_Remotecontrol_Source.jpg) and select [HDMI 2](對應照片 153_TV_HDMI2.jpg). Then use the [Wireless Keyboard/Mouse](對應照片 153_wirelessKM.jpg). Long-press the [Power Button](對應照片 153_Poly_On.jpg) of the Poly speaker until the [White Light](對應照片 153_Poly_PowerOn.jpg) stays on."
+                }
+            },
+            "2.777.A": { 
+                isFinal: true, title: { zh: "777 視訊 (電腦)", en: "777 Video (Room PC)" }, 
+                content: {
+                    zh: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 777_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 777_wirelessKM.jpg)，將無線麥克風喇叭(對應照片 777_Poly.jpg)[電源鍵](對應照片 777_Poly_On.jpg)長壓至「亮起白燈」為止(對應照片 777_Poly_PowerOn.jpg)。",
+                    en: "The TV is [SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg). Use remote [Room 777](對應照片 777_TV_Remotecontrol.jpg). 1. [Power On](對應照片 777_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 777_TV_Remotecontrol_Source.jpg) and select [HDMI 2](對應照片 777_TV_HDMI2.jpg). Then use the [Wireless Keyboard/Mouse](對應照片 777_wirelessKM.jpg). Long-press the [Power Button](對應照片 777_Poly_On.jpg) of the Poly speaker until the [White Light](對應照片 777_Poly_PowerOn.jpg) stays on."
+                }
+            },
+            "2.151.B": { 
+                isFinal: true, title: { zh: "151 視訊 (自帶電腦)", en: "151 Video (Laptop)" }, 
+                content: {
+                    zh: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 151_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 151_wirelessHDMI.jpg)。",
+                    en: "The TV is [AOC 70U6195 LED](對應照片 151_TV.jpg). Use remote [Room 151](對應照片 151_TV_Remotecontrol.jpg). 1. [Power On](對應照片 151_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 151_TV_Remotecontrol_Source.jpg) and select [HDMI 1](對應照片 151_TV_HDMI1.jpg). Then, plug the [Wireless HDMI Transmitter](對應照片 151_wirelessHDMI.jpg) into your laptop's HDMI port."
+                }
+            },
+            "2.153.B": { 
+                isFinal: true, title: { zh: "153 視訊 (自帶電腦)", en: "153 Video (Laptop)" }, 
+                content: {
+                    zh: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 153_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 153_wirelessHDMI.jpg)。",
+                    en: "The TV is [TCL 85QM88](對應照片 153_TV.jpg). Use remote [Room 153](對應照片 153_TV_Remotecontrol.jpg). 1. [Power On](對應照片 153_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 153_TV_Remotecontrol_Source.jpg) and select [HDMI 1](對應照片 153_TV_HDMI1.jpg). Then, plug the [Wireless HDMI Transmitter](對應照片 153_wirelessHDMI.jpg) into your laptop's HDMI port."
+                }
+            },
+            "2.777.B": { 
+                isFinal: true, title: { zh: "777 視訊 (自帶電腦)", en: "777 Video (Laptop)" }, 
+                content: {
+                    zh: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 777_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 777_wirelessHDMI.jpg)。",
+                    en: "The TV is [SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg). Use remote [Room 777](對應照片 777_TV_Remotecontrol.jpg). 1. [Power On](對應照片 777_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 777_TV_Remotecontrol_Source.jpg) and select [HDMI 1](對應照片 777_TV_HDMI1.jpg). Then, plug the [Wireless HDMI Transmitter](對應照片 777_wirelessHDMI.jpg) into your laptop's HDMI port."
+                }
+            },
+            // --- 一般投影 A ---
+            "3.151.A": { 
+                isFinal: true, title: { zh: "151 一般 (電腦)", en: "151 Display (Room PC)" }, 
+                content: {
+                    zh: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 151_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 151_wirelessKM.jpg)。",
+                    en: "The TV is [AOC 70U6195 LED](對應照片 151_TV.jpg). Use remote [Room 151](對應照片 151_TV_Remotecontrol.jpg). 1. [Power On](對應照片 151_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 151_TV_Remotecontrol_Source.jpg) and select [HDMI 2](對應照片 151_TV_HDMI2.jpg). Then use the [Wireless Keyboard/Mouse](對應照片 151_wirelessKM.jpg)."
+                }
+            },
+            "3.153.A": { 
+                isFinal: true, title: { zh: "153 一般 (電腦)", en: "153 Display (Room PC)" }, 
+                content: {
+                    zh: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 153_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 153_wirelessKM.jpg)。",
+                    en: "The TV is [TCL 85QM88](對應照片 153_TV.jpg). Use remote [Room 153](對應照片 153_TV_Remotecontrol.jpg). 1. [Power On](對應照片 153_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 153_TV_Remotecontrol_Source.jpg) and select [HDMI 2](對應照片 153_TV_HDMI2.jpg). Then use the [Wireless Keyboard/Mouse](對應照片 153_wirelessKM.jpg)."
+                }
+            },
+            "3.777.A": { 
+                isFinal: true, title: { zh: "777 一般 (電腦)", en: "777 Display (Room PC)" }, 
+                content: {
+                    zh: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 2](對應照片 777_TV_HDMI2.jpg)；接著請操作會議室的無線鍵盤滑鼠組(對應照片 777_wirelessKM.jpg)。",
+                    en: "The TV is [SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg). Use remote [Room 777](對應照片 777_TV_Remotecontrol.jpg). 1. [Power On](對應照片 777_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 777_TV_Remotecontrol_Source.jpg) and select [HDMI 2](對應照片 777_TV_HDMI2.jpg). Then use the [Wireless Keyboard/Mouse](對應照片 777_wirelessKM.jpg)."
+                }
+            },
+            // --- 一般投影 B ---
+            "3.151.B": { 
+                isFinal: true, title: { zh: "151 一般 (自帶電腦)", en: "151 Display (Laptop)" }, 
+                content: {
+                    zh: "151會議室的電視型號是[AOC 70U6195 LED](對應照片 151_TV.jpg)遙控器正面貼紙[151會議室](對應照片 151_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 151_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 151_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 151_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 151_wirelessHDMI.jpg)。",
+                    en: "The TV is [AOC 70U6195 LED](對應照片 151_TV.jpg). Use remote [Room 151](對應照片 151_TV_Remotecontrol.jpg). 1. [Power On](對應照片 151_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 151_TV_Remotecontrol_Source.jpg) and select [HDMI 1](對應照片 151_TV_HDMI1.jpg). Then, plug the [Wireless HDMI Transmitter](對應照片 151_wirelessHDMI.jpg) into your laptop's HDMI port."
+                }
+            },
+            "3.153.B": { 
+                isFinal: true, title: { zh: "153 一般 (自帶電腦)", en: "153 Display (Laptop)" }, 
+                content: {
+                    zh: "153會議室的電視型號是[TCL 85QM88](對應照片 153_TV.jpg)遙控器正面貼紙[153會議室](對應照片 153_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 153_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 153_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 153_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 153_wirelessHDMI.jpg)。",
+                    en: "The TV is [TCL 85QM88](對應照片 153_TV.jpg). Use remote [Room 153](對應照片 153_TV_Remotecontrol.jpg). 1. [Power On](對應照片 153_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 153_TV_Remotecontrol_Source.jpg) and select [HDMI 1](對應照片 153_TV_HDMI1.jpg). Then, plug the [Wireless HDMI Transmitter](對應照片 153_wirelessHDMI.jpg) into your laptop's HDMI port."
+                }
+            },
+            "3.777.B": { 
+                isFinal: true, title: { zh: "777 一般 (自帶電腦)", en: "777 Display (Laptop)" }, 
+                content: {
+                    zh: "777會議室的電視型號是[SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg)遙控器正面貼紙[777會議室](對應照片 777_TV_Remotecontrol.jpg)，請依序操作遙控器[開啟電源](對應照片 777_TV_Remotecontrol_On.jpg)，[訊號源](對應照片 777_TV_Remotecontrol_Source.jpg)，看著電視畫面選擇[HDMI 1](對應照片 777_TV_HDMI1.jpg)；接著請將無線HDMI接上自帶電腦(筆電)的HDMI孔(對應照片 777_wirelessHDMI.jpg)。",
+                    en: "The TV is [SAMSUNG UA75BU8000WXZW](對應照片 777_TV.jpg). Use remote [Room 777](對應照片 777_TV_Remotecontrol.jpg). 1. [Power On](對應照片 777_TV_Remotecontrol_On.jpg). 2. Press [Source](對應照片 777_TV_Remotecontrol_Source.jpg) and select [HDMI 1](對應照片 777_TV_HDMI1.jpg). Then, plug the [Wireless HDMI Transmitter](對應照片 777_wirelessHDMI.jpg) into your laptop's HDMI port."
+                }
+            }
         };
 
-        const state = { history: ["1"] };
+        const UI_TEXT = {
+            guide_title: { zh: "設備操作指南", en: "Equipment Guide" },
+            back: { zh: "上一步", en: "Back" },
+            home: { zh: "回首頁", en: "Home" }
+        };
+
+        const state = { history: ["1"], lang: "zh" };
+
+        function toggleLang() {
+            state.lang = state.lang === "zh" ? "en" : "zh";
+            render();
+        }
 
         function formatContent(text) {
             let formatted = text.replace(/\[(.*?)\]/g, '<span class="highlight">$1</span>');
@@ -75,12 +159,15 @@
         function render() {
             const container = document.getElementById('app');
             const currentId = state.history[state.history.length - 1];
-            const node = DECISION_TREE[currentId];
+            const node = DECISION_TREE[currentId] || DECISION_TREE["1"];
 
             let html = `
-                <div class="bg-slate-800 p-5 text-white text-center shadow-lg">
-                    <p class="text-slate-400 text-[10px] uppercase tracking-[0.2em] mb-1">${node.title}</p>
-                    <h1 class="text-lg font-bold">設備操作指南</h1>
+                <div class="bg-slate-800 p-5 text-white shadow-lg relative">
+                    <button onclick="toggleLang()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-slate-700 hover:bg-slate-600 px-4 py-1.5 rounded-full text-xs font-bold transition-all border border-slate-500 shadow-sm active:scale-95">
+                        ${state.lang === 'zh' ? 'English' : '中文'}
+                    </button>
+                    <p class="text-slate-400 text-[10px] uppercase tracking-[0.2em] mb-1">${node.title[state.lang]}</p>
+                    <h1 class="text-lg font-bold">${UI_TEXT.guide_title[state.lang]}</h1>
                 </div>
                 <div class="p-5 md:p-8">
             `;
@@ -89,19 +176,19 @@
                 html += `
                     <div class="fade-in content-text">
                         <div class="text-slate-700 leading-relaxed text-md md:text-lg">
-                            ${formatContent(node.content)}
+                            ${formatContent(node.content[state.lang])}
                         </div>
                     </div>
                 `;
             } else {
                 html += `
-                    <h3 class="text-lg font-bold mb-6 text-slate-800 text-center">${node.question}</h3>
+                    <h3 class="text-lg font-bold mb-6 text-slate-800 text-center">${node.question[state.lang]}</h3>
                     <div class="grid gap-3">
                         ${node.options.map(opt => `
                             <button onclick="goNext('${opt.nextId}')" 
-                                class="w-full py-4 px-5 bg-white border border-slate-200 active:bg-blue-50 hover:border-blue-400 text-slate-700 rounded-xl transition-all font-bold text-md shadow-sm flex justify-between items-center">
-                                ${opt.label}
-                                <span class="text-slate-300">→</span>
+                                class="w-full py-4 px-5 bg-white border border-slate-200 active:bg-blue-50 hover:border-blue-400 text-slate-700 rounded-xl transition-all font-bold text-md shadow-sm flex justify-between items-center group">
+                                ${opt.label[state.lang]}
+                                <span class="text-slate-300 group-hover:text-blue-500 transition-colors">→</span>
                             </button>
                         `).join('')}
                     </div>
@@ -110,8 +197,8 @@
 
             html += `
                 <div class="mt-8 flex gap-3 border-t border-slate-100 pt-6">
-                    ${state.history.length > 1 ? `<button onclick="goBack()" class="flex-1 py-3 px-4 bg-slate-100 text-slate-600 rounded-lg font-bold text-sm">上一步</button>` : ''}
-                    <button onclick="goReset()" class="flex-1 py-3 px-4 bg-blue-600 text-white rounded-lg font-bold text-sm shadow-md">回首頁</button>
+                    ${state.history.length > 1 ? `<button onclick="goBack()" class="flex-1 py-3 px-4 bg-slate-100 text-slate-600 rounded-lg font-bold text-sm active:bg-slate-200">${UI_TEXT.back[state.lang]}</button>` : ''}
+                    <button onclick="goReset()" class="flex-1 py-3 px-4 bg-blue-600 text-white rounded-lg font-bold text-sm shadow-md active:bg-blue-700">${UI_TEXT.home[state.lang]}</button>
                 </div>
             </div>`;
 
